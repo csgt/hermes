@@ -35,7 +35,7 @@
 			<th>Código</th>
 			<td>{{ $codigo }}</td>
 			<th>Fecha</th>
-			<td>{{ date('d-m-Y') }}</td>
+			<td>{{ date('d-m-Y H:i') }}</td>
 		</tr>
 		<tr>
 			<th>URL</th>
