@@ -72,9 +72,9 @@ class Hermes {
 	}
 
 	//=== SEND ERROR NOTIFICATIONS ===
-	public static function notificarError($aCodigo, $aMensaje, $aUrl) {
+	public static function notificarError($aParametros) {
 		try {
-			Mail::send(Config::get('hermes::notificacionview'), array('exception'=>$aMensaje,'codigo'=>$aCodigo,'url'=>$aUrl), function($message) {
+			Mail::send(Config::get('hermes::notificacionview'), $aParametros, function($message) {
 				$message->from(Config::get('hermes::notificacionemail'), Config::get('hermes::notificacionfrom'));
 	     	$message->subject(Config::get('hermes::notificaciontitulo'));
 	     	$message->to(Config::get('hermes::notificarerrores'));
