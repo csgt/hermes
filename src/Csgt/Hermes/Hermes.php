@@ -73,6 +73,18 @@ class Hermes {
 
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($aParametros) {
+		if(!array_key_exists('excepcion', $aParametros)) {
+			$mensaje = 'Parametros incorrectos en Hermes';
+			$archivo = 'Parametros incorrectos en Hermes';
+			$linea   = 'Parametros incorrectos en Hermes';
+		}
+
+		else {
+			$mensaje = $aParametros['excepcion']->getMessage();
+			$archivo = $aParametros['excepcion']->getFile();
+			$linea   = $aParametros['excepcion']->getLine();
+		}
+
 		if ($aParametros['excepcion'] instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
     	Log::error('NotFoundHttpException Route: ' . Request::url() );
   
@@ -85,16 +97,16 @@ class Hermes {
 
 		try {
 			$parametros = array(
-				'codigo'    => $aParametros['codigo'],
-				'mensaje'   => $aParametros['excepcion']->getMessage(),
+				'codigo'    => array_key_exists('codigo', $aParametros) ? $aParametros['codigo'] : 'Parametros incorrectos en Hermes',
+				'mensaje'   => $mensaje,
 				'url'       => Request::url(),
 				'ip'        => $_SERVER['REMOTE_ADDR'],
 				'useragent' => $_SERVER['HTTP_USER_AGENT'],
 				'userid'    => Auth::check() ? Auth::id() : 'Usuario no autenticado',
 				'rolid'     => Auth::check() ? Auth::user()->rolid : 'Usuario no autenticado',
 				'request'   => Request::method(),
-				'archivo'   => $aParametros['excepcion']->getFile(),
-				'linea'     => $aParametros['excepcion']->getLine()
+				'archivo'   => $archivo,
+				'linea'     => $linea
 			);
 
 			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) {
