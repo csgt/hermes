@@ -81,7 +81,7 @@ class Hermes {
 	  
 	  Log::error($aParametros['excepcion']);
 
-		if(App::environment() <> 'local') return;
+		if(App::environment() == 'local') return;
 
 		try {
 			$parametros = array(
