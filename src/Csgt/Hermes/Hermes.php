@@ -1,7 +1,7 @@
 <?php 
 
 namespace Csgt\Hermes;
-use Config, View, Response, Redirect, Mail, Exception;
+use Config, View, Response, Redirect, Mail, Exception, Auth, Request;
 
 class Hermes {
 
@@ -74,7 +74,20 @@ class Hermes {
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($aParametros) {
 		try {
-			Mail::send(Config::get('hermes::notificacionview'), $aParametros, function($message) {
+			$parametros = array(
+				'codigo'    => $aParametros['codigo'],
+				'mensaje'   => $aParametros['excepcion']->getMessage(),
+				'url'       => Request::url(),
+				'ip'        => $_SERVER['REMOTE_ADDR'],
+				'useragent' => $_SERVER['HTTP_USER_AGENT'],
+				'userid'    => Auth::check() ? Auth::id() : 'Usuario no autenticado',
+				'rolid'     => Auth::check() ? Auth::user()->rolid : 'Usuario no autenticado',
+				'request'   => Request::method(),
+				'archivo'   => $aParametros['excepcion']->getFile(),
+				'linea'     => $aParametros['excepcion']->getLine()
+			);
+
+			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) {
 				$message->from(Config::get('hermes::notificacionemail'), Config::get('hermes::notificacionfrom'));
 	     	$message->subject(Config::get('hermes::notificaciontitulo'));
 	     	$message->to(Config::get('hermes::notificarerrores'));
