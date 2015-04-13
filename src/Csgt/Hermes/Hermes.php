@@ -1,7 +1,7 @@
 <?php 
 
 namespace Csgt\Hermes;
-use Config, View, Response, Redirect, Mail, Exception, Auth, Request;
+use Config, View, Response, Redirect, Mail, Exception, Auth, Request, Log, App;
 
 class Hermes {
 
@@ -73,6 +73,16 @@ class Hermes {
 
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($aParametros) {
+		if ($aParametros['excepcion'] instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+    	Log::error('NotFoundHttpException Route: ' . Request::url() );
+  
+  	else if ($aParametros['excepcion'] instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
+	    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
+	  
+	  Log::error($aParametros['excepcion']);
+
+		if(App::environment() <> 'local') return;
+
 		try {
 			$parametros = array(
 				'codigo'    => $aParametros['codigo'],
@@ -93,5 +103,6 @@ class Hermes {
 	     	$message->to(Config::get('hermes::notificarerrores'));
 			});
 		} catch (Exception $e) { }
+		
 	}
 }
