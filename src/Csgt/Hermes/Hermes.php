@@ -74,24 +74,28 @@ class Hermes {
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($aParametros) {
 		if(!array_key_exists('excepcion', $aParametros)) {
-			$mensaje = 'Parametros incorrectos en Hermes';
-			$archivo = 'Parametros incorrectos en Hermes';
-			$linea   = 'Parametros incorrectos en Hermes';
+			$mensaje   = 'Parametros incorrectos en Hermes';
+			$archivo   = 'Parametros incorrectos en Hermes';
+			$linea     = 'Parametros incorrectos en Hermes';
+			$excepcion = null;
 		}
 
 		else {
-			$mensaje = $aParametros['excepcion']->getMessage();
-			$archivo = $aParametros['excepcion']->getFile();
-			$linea   = $aParametros['excepcion']->getLine();
+			$mensaje   = $aParametros['excepcion']->getMessage();
+			$archivo   = $aParametros['excepcion']->getFile();
+			$linea     = $aParametros['excepcion']->getLine();
+			$excepcion = $aParametros['excepcion'];
 		}
 
-		if ($aParametros['excepcion'] instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
-    	Log::error('NotFoundHttpException Route: ' . Request::url() );
-  
-  	else if ($aParametros['excepcion'] instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
-	    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
+		if($excepcion) {
+			if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+	    	Log::error('NotFoundHttpException Route: ' . Request::url() );
 	  
-	  Log::error($aParametros['excepcion']);
+	  	else if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
+		    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
+		  
+		  Log::error($excepcion);
+		}
 
 		if(App::environment() == 'local') return;
 
