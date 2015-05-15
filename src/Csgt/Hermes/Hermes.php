@@ -100,8 +100,9 @@ class Hermes {
 		if(App::environment() == 'local') return;
 
 		try {
+			$codigo = array_key_exists('codigo', $aParametros) ? $aParametros['codigo'] : 'Parametros incorrectos en Hermes';
 			$parametros = array(
-				'codigo'    => array_key_exists('codigo', $aParametros) ? $aParametros['codigo'] : 'Parametros incorrectos en Hermes',
+				'codigo'    => $codigo,
 				'mensaje'   => $mensaje,
 				'url'       => Request::url(),
 				'ip'        => $_SERVER['REMOTE_ADDR'],
@@ -113,9 +114,9 @@ class Hermes {
 				'linea'     => $linea
 			);
 
-			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) {
+			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) use ($codigo) {
 				$message->from(Config::get('hermes::notificacionemail'), Config::get('hermes::notificacionfrom'));
-	     	$message->subject(Config::get('hermes::notificaciontitulo'));
+	     	$message->subject(Config::get('hermes::notificaciontitulo') . '| Error ' . $codigo);
 	     	$message->to(Config::get('hermes::notificarerrores'));
 			});
 		} catch (Exception $e) { }
