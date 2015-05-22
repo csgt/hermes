@@ -116,7 +116,7 @@ class Hermes {
 
 			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) use ($codigo) {
 				$message->from(Config::get('hermes::notificacionemail'), Config::get('hermes::notificacionfrom').' | '.Config::get('hermes::notificaciontitulo'));
-	     	$message->subject('Error ' . $codigo);
+	     	$message->subject(Config::get('hermes::notificaciontitulo') . ' - Error ' . $codigo);
 	     	$message->to(Config::get('hermes::notificarerrores'));
 			});
 		} catch (Exception $e) { }
