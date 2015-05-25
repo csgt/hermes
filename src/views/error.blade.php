@@ -68,6 +68,14 @@
 			<th align="left">Method</th>
 			<td>{{ $request }}</td>
 		</tr>
+		<tr>
+			<th align="left">Vars</th>
+			<td colspan="3">
+				@foreach($vars as $key=>$var)
+				  {{$key . ': ' . $var . '<br>'}}
+				@endforeach
+			</td>
+		</tr>
 	</table>
 </body>
 </html>

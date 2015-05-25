@@ -1,7 +1,7 @@
 <?php 
 
 namespace Csgt\Hermes;
-use Config, View, Response, Redirect, Mail, Exception, Auth, Request, Log, App;
+use Config, View, Response, Redirect, Mail, Exception, Auth, Request, Log, App, Input;
 
 class Hermes {
 
@@ -105,6 +105,7 @@ class Hermes {
 				'codigo'    => $codigo,
 				'mensaje'   => $mensaje,
 				'url'       => Request::url(),
+				'vars'			=> Input::all(),
 				'ip'        => $_SERVER['REMOTE_ADDR'],
 				'useragent' => $_SERVER['HTTP_USER_AGENT'],
 				'userid'    => Auth::check() ? Auth::id() : 'Usuario no autenticado',
