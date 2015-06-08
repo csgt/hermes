@@ -4,6 +4,6 @@ return array(
 	'notificaciontitulo' => 'Nombre del proyecto',
 	'notificacionemail'  => 'hermes@cs.com.gt',
 	'notificacionfrom'   => 'Hermes',
-	'notificacionview'   => 'hermes::error'
-	'ignorecodes'        => array('');
+	'notificacionview'   => 'hermes::error',
+	'ignorecodes'        => array(''),
 );
