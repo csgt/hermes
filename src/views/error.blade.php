@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<table cellspacing="5" cellpadding="5" border="1" width="100%">
+	<table cellspacing="5" cellpadding="5" border="1" width="100%" style="border-collapse: collapse;">
 		<tr>
 			<th align="left">URL</th>
 			<td colspan="3">{{ $url }}</td>
