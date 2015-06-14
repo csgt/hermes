@@ -75,8 +75,6 @@ class Hermes {
 	public static function notificarError($aParametros) {
 		$codigo = array_key_exists('codigo', $aParametros) ? $aParametros['codigo'] : 'Parametros incorrectos en Hermes';
 
-		if(in_array($codigo, Config::get('hermes::ignorecodes'))) return;
-
 		if(!array_key_exists('excepcion', $aParametros)) {
 			$mensaje   = 'Parametros incorrectos en Hermes';
 			$archivo   = 'Parametros incorrectos en Hermes';
@@ -102,6 +100,8 @@ class Hermes {
 		}
 
 		if(App::environment() == 'local') return;
+
+		if(in_array($codigo, Config::get('hermes::ignorecodes'))) return;
 
 		try {
 			$parametros = array(
