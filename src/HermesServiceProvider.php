@@ -2,6 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Routing\Router;
 
 class HermesServiceProvider extends ServiceProvider {
 
