@@ -2,25 +2,21 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Routing\Router;
 
 class HermesServiceProvider extends ServiceProvider {
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
 	protected $defer = false;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->package('csgt/hermes');
+	public function boot(Router $router) {
+		$this->mergeConfigFrom(__DIR__ . '/config/csgthermes.php', 'csgthermes');
+		$this->loadViewsFrom(__DIR__ . '/resources/views/','csgthermes');
+
 		AliasLoader::getInstance()->alias('Hermes','Csgt\Hermes\Hermes');
+
+		$this->publishes([
+      __DIR__.'/config/csgthermes.php' => config_path('csgthermes.php'),
+    ], 'config');
 	}
 
 	public function register() {
@@ -32,5 +28,4 @@ class HermesServiceProvider extends ServiceProvider {
 	public function provides() {
 		return array('hermes');
 	}
-
 }

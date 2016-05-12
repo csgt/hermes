@@ -8,10 +8,10 @@ class Hermes {
 	private static $view;
 	private static $data;
 	private static $subject;
-	private static $to          = array();
-	private static $cc          = array();
-	private static $bcc         = array();
-	private static $attachments = array();
+	private static $to          = [];
+	private static $cc          = [];
+	private static $bcc         = [];
+	private static $attachments = [];
 	private static $fromemail   = 'hermes@cs.com.gt';
 	private static $from        = 'Hermes';
 	
@@ -49,7 +49,7 @@ class Hermes {
 
 	//=== SEND EMAIL ===
 	public static function sendEmail() {
-		$response = array('error'=>false,'message'=>'');
+		$response = ['error'=>false,'message'=>''];
 
 		try {
 			Mail::send(self::$view, self::$data, function($message) {
@@ -72,36 +72,24 @@ class Hermes {
 	}
 
 	//=== SEND ERROR NOTIFICATIONS ===
-	public static function notificarError($aParametros) {
-		$codigo = array_key_exists('codigo', $aParametros) ? $aParametros['codigo'] : 'Parametros incorrectos en Hermes';
+	public static function notificarError($excepcion) {
 
-		if(!array_key_exists('excepcion', $aParametros)) {
-			$mensaje   = 'Parametros incorrectos en Hermes';
-			$archivo   = 'Parametros incorrectos en Hermes';
-			$linea     = 'Parametros incorrectos en Hermes';
-			$excepcion = null;
-		}
+		$mensaje   = $excepcion->getMessage();
+		$archivo   = $excepcion->getFile();
+		$linea     = $excepcion->getLine();
+		$codigo    = $excepcion->getStatusCode();
 
-		else {
-			$mensaje   = $aParametros['excepcion']->getMessage();
-			$archivo   = $aParametros['excepcion']->getFile();
-			$linea     = $aParametros['excepcion']->getLine();
-			$excepcion = $aParametros['excepcion'];
-		}
-
-		if($excepcion) {
-			if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
-	    	Log::error('NotFoundHttpException Route: ' . Request::url() );
+		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+    	Log::error('NotFoundHttpException Route: ' . Request::url() );
+  
+  	else if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
+	    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
 	  
-	  	else if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
-		    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
-		  
-		  Log::error($excepcion);
-		}
+	  Log::error($excepcion);
 
 		if(App::environment() == 'local') return;
 
-		if(in_array($codigo, Config::get('hermes::ignorecodes'))) return;
+		if(in_array($codigo, config("csgthermes.ignorecodes"))) return;
 
 		try {
 			$parametros = array(
@@ -111,18 +99,18 @@ class Hermes {
 				'vars'			=> Input::all(),
 				'ip'        => $_SERVER['REMOTE_ADDR'],
 				'useragent' => $_SERVER['HTTP_USER_AGENT'],
-				'userid'    => Auth::check() ? Auth::id() : 'Usuario no autenticado',
-				'rolid'     => Auth::check() ? Auth::user()->rolid : 'Usuario no autenticado',
+				'userid'    => Auth::check() ? Auth::id() : '--',
+				'rolid'     => Auth::check() ? Auth::user()->rolid : '--',
 				'request'   => Request::method(),
 				'archivo'   => $archivo,
 				'linea'     => $linea
 			);
 
-			Mail::send(Config::get('hermes::notificacionview'), $parametros, function($message) use ($codigo) {
-				$message->from(Config::get('hermes::notificacionemail'), Config::get('hermes::notificacionfrom').' | '.Config::get('hermes::notificaciontitulo'));
-	     	$message->subject(Config::get('hermes::notificaciontitulo') . ' - Error ' . $codigo);
-	     	$message->to(Config::get('hermes::notificarerrores'));
+			Mail::send(config("csgthermes.notificacionview"), $parametros, function($message) use ($codigo) {
+				$message->from(config("csgthermes.notificacionemail"), config("csgthermes.notificacionfrom").' | '.config("csgthermes.notificaciontitulo"));
+	     	$message->subject(config("csgthermes.notificaciontitulo") . ' - Error ' . $codigo);
+	     	$message->to(config("csgthermes.notificarerrores"));
 			});
-		} catch (Exception $e) { }
+		} catch (Exception $e) {dd($e);}
 	}
 }

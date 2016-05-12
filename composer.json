@@ -1,23 +1,24 @@
 {
-    "name": "csgt/hermes",
-    "description": "",
-    "authors": [
-        {
-            "name": "CS",
-            "email": "info@cs.com.gt"
-        }
+  "name": "csgt/hermes",
+  "description": "",
+  "authors": [
+    {
+      "name": "CS",
+      "email": "info@cs.com.gt"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "illuminate/support": "~5.1",
+  },
+  "autoload": {
+    "classmap": [
+      "src/Http/Controllers",
+      "src/Http/Middleware"
     ],
-    "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "4.2.*"
-    },
-    "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
-        "psr-0": {
-            "Csgt\\Hermes\\": "src/"
-        }
-    },
-    "minimum-stability": "stable"
+    "psr-0": {
+      "Csgt\\Hermes\\": "src/"
+    }
+  },
+  "minimum-stability" : "stable"
 }
