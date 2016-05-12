@@ -111,6 +111,8 @@ class Hermes {
 	     	$message->subject(config("csgthermes.notificaciontitulo") . ' - Error ' . $codigo);
 	     	$message->to(config("csgthermes.notificarerrores"));
 			});
-		} catch (Exception $e) {dd($e);}
+		} catch (Exception $e) {
+				Log::error($e);
+			}
 	}
 }
