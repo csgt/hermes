@@ -2,7 +2,6 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
-use Illuminate\Routing\Router;
 
 class HermesServiceProvider extends ServiceProvider {
 
@@ -26,6 +25,6 @@ class HermesServiceProvider extends ServiceProvider {
 	}
 
 	public function provides() {
-		return array('hermes');
+		return ['hermes'];
 	}
 }
