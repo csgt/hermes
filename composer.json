@@ -13,8 +13,6 @@
   },
   "autoload": {
     "classmap": [
-      "src/Http/Controllers",
-      "src/Http/Middleware"
     ],
     "psr-0": {
       "Csgt\\Hermes\\": "src/"
