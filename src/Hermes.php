@@ -63,7 +63,7 @@ class Hermes {
 	     		$message->attach($attachment);
 	     	}
 			});
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$response['error']   = true;
 			$response['message'] = $e->getMessage();
 		}
@@ -81,7 +81,7 @@ class Hermes {
 			$linea     = $excepcion->getLine();
 			$codigo    = $excepcion->getStatusCode();
 		} 
-		catch (Exception $e) {}
+		catch (\Exception $e) {}
 		
 
 		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
@@ -116,7 +116,7 @@ class Hermes {
 	     	$message->subject(config("csgthermes.notificaciontitulo") . ' - Error ' . $codigo);
 	     	$message->to(config("csgthermes.notificarerrores"));
 			});
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 				Log::error($e);
 			}
 	}
