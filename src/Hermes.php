@@ -73,11 +73,16 @@ class Hermes {
 
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($excepcion) {
+		$mensaje='--'; $archivo='--'; $linea='--'; $codigo='--';
 
-		$mensaje   = $excepcion->getMessage();
-		$archivo   = $excepcion->getFile();
-		$linea     = $excepcion->getLine();
-		$codigo    = $excepcion->getStatusCode();
+		try {
+			$mensaje   = $excepcion->getMessage();
+			$archivo   = $excepcion->getFile();
+			$linea     = $excepcion->getLine();
+			$codigo    = $excepcion->getStatusCode();
+		} 
+		catch (Exception $e) {}
+		
 
 		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
     	Log::error('NotFoundHttpException Route: ' . Request::url() );
