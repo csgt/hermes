@@ -79,7 +79,7 @@ class Hermes {
 			$mensaje   = $excepcion->getMessage();
 			$archivo   = $excepcion->getFile();
 			$linea     = $excepcion->getLine();
-			$codigo    = $excepcion->getStatusCode();
+			$codigo    = $excepcion->getCode();
 		} 
 		catch (\Exception $e) {}
 		
