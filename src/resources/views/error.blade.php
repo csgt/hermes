@@ -44,7 +44,7 @@
 			<th align="left">Vars</th>
 			<td colspan="3">
 				@foreach($vars as $key=>$var)
-				  {{$key . ': ' . $var . '<br>'}}
+				  {{$key . ': ' . $var}}<br>
 				@endforeach
 			</td>
 		</tr>

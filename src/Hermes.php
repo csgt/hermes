@@ -80,10 +80,13 @@ class Hermes {
 			$archivo   = $excepcion->getFile();
 			$linea     = $excepcion->getLine();
 			$codigo    = $excepcion->getCode();
+
+			if($codigo==0) {
+				$codigo = $excepcion->getStatusCode();
+			}
 		} 
 		catch (\Exception $e) {}
 		
-
 		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
     	Log::error('NotFoundHttpException Route: ' . Request::url() );
   
