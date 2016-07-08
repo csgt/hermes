@@ -1,7 +1,8 @@
 <?php 
 
 namespace Csgt\Hermes;
-use Config, View, Response, Redirect, Mail, Exception, Auth, Request, Log, App, Input;
+use Config, View, Response, Redirect, Mail, Exception, Auth, 
+  Request, Log, App, Input;
 
 class Hermes {
 
@@ -74,24 +75,23 @@ class Hermes {
 	//=== SEND ERROR NOTIFICATIONS ===
 	public static function notificarError($excepcion) {
 		$mensaje='--'; $archivo='--'; $linea='--'; $codigo='--';
-
 		try {
 			$mensaje   = $excepcion->getMessage();
 			$archivo   = $excepcion->getFile();
 			$linea     = $excepcion->getLine();
 			$codigo    = $excepcion->getCode();
-
-			if($codigo==0) {
-				$codigo = $excepcion->getStatusCode();
-			}
 		} 
 		catch (\Exception $e) {}
 		
-		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException)
+		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+			$codigo = 404;
     	Log::error('NotFoundHttpException Route: ' . Request::url() );
+		}
   
-  	else if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException)
+  	else if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+  		$codigo = 405;
 	    Log::error('MethodNotAllowedHttpException Route: ' . Request::url() );
+  	}
 	  
 	  Log::error($excepcion);
 
