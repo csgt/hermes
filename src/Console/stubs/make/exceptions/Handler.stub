@@ -1,0 +1,37 @@
+<?php
+
+namespace {{namespace}}Exceptions;
+
+use Exception, Csgt\Hermes\Hermes;
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+
+class Handler extends ExceptionHandler {
+
+  protected $dontReport = [
+    HttpException::class,
+  ];
+
+  public function report(Exception $e) {
+    Hermes::notificarError($e);
+    return parent::report($e);
+  }
+
+  public function render($request, Exception $e) {
+    if($this->isHttpException($e)) {  
+      if($e instanceof NotFoundHttpException) {
+        return response()->view('errors.404',[],404);
+      }
+    }
+    return parent::render($request, $e);
+  }
+
+  protected function unauthenticated($request, AuthenticationException $exception) {
+    if ($request->expectsJson()) {
+      return response()->json(['error' => 'Unauthenticated.'], 401);
+    }
+    return redirect()->guest('login');
+  }
+}

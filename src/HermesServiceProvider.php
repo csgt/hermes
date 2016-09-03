@@ -20,6 +20,10 @@ class HermesServiceProvider extends ServiceProvider {
 	}
 
 	public function register() {
+		$this->commands([
+      Console\MakeHermesCommand::class
+    ]);
+
 		$this->app['hermes'] = $this->app->share(function($app) {
     	return new Hermes;
   	});
