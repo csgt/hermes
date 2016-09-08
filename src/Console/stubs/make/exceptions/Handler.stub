@@ -1,6 +1,4 @@
-<?php
-
-namespace {{namespace}}Exceptions;
+<?php namespace {{namespace}}Exceptions;
 
 use Exception, Csgt\Hermes\Hermes;
 use Illuminate\Auth\AuthenticationException;
@@ -20,6 +18,11 @@ class Handler extends ExceptionHandler {
   }
 
   public function render($request, Exception $e) {
+    if ($request->expectsJson()) {
+      return response()->json(['codigoerror'=> 999, 'error' => $e->getMessage(), 'data' => [], 'recordsTotal' => 0,
+    'recordsFiltered' => 0]);
+    }
+
     if($this->isHttpException($e)) {  
       if($e instanceof NotFoundHttpException) {
         return response()->view('errors.404',[],404);
@@ -30,7 +33,7 @@ class Handler extends ExceptionHandler {
 
   protected function unauthenticated($request, AuthenticationException $exception) {
     if ($request->expectsJson()) {
-      return response()->json(['error' => 'Unauthenticated.'], 401);
+      return response()->json(['codigoerror'=> 999, 'error' => $exception->getMessage(), 'data' => []]);
     }
     return redirect()->guest('login');
   }
