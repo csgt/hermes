@@ -24,7 +24,7 @@ class MakeHermesCommand extends Command {
   ];
 */
   public function fire() {
-    //$this->createDirectories();
+    $this->createDirectories();
     $this->exportViews(); //Pendiente hasta terminar el login
     //$this->exportLangs();
     
@@ -68,25 +68,14 @@ class MakeHermesCommand extends Command {
   */
     $this->info('Vistas & exceptions para Hermes generadas correctamente.');
   }
-/*
+
   protected function createDirectories() {
-    if (! is_dir(base_path('resources/lang/es'))) {
-      mkdir(base_path('resources/lang/es'), 0755, true);
-    }
 
-    if (! is_dir(base_path('resources/views/layouts'))) {
-      mkdir(base_path('resources/views/layouts'), 0755, true);
-    }
-
-    if (! is_dir(base_path('resources/views/auth/passwords'))) {
-      mkdir(base_path('resources/views/auth/passwords'), 0755, true);
-    }
-
-    if (! is_dir(app_path('Models'))) {
-      mkdir(app_path('Models'), 0755, true);
+    if (! is_dir(base_path('resources/views/errors'))) {
+      mkdir(base_path('resources/views/errors'), 0755, true);
     }
   }
-*/
+
   protected function exportViews() {
     foreach ($this->views as $key => $value) {
       copy(
