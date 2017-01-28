@@ -3,10 +3,8 @@
 namespace Csgt\Hermes\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\AppNamespaceDetectorTrait;
 
 class MakeHermesCommand extends Command {
-  use AppNamespaceDetectorTrait;
 
   protected $signature = 'make:csgthermes';
 
