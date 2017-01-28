@@ -120,6 +120,6 @@ class MakeHermesCommand extends Command {
   */
 
   protected function getAppNamespace(){
-    return 'App\'';
+    return 'App\\';
   }
 }
