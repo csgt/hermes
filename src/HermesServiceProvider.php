@@ -24,7 +24,7 @@ class HermesServiceProvider extends ServiceProvider {
       Console\MakeHermesCommand::class
     ]);
 
-		$this->singleton('hermes', function($app) {
+		$this->app->singleton('hermes', function($app) {
     	return new Hermes;
   	});
 	}
