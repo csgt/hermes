@@ -5,5 +5,4 @@ return array(
 	'notificacionemail'  => 'hermes@cs.com.gt',
 	'notificacionfrom'   => 'Hermes',
 	'notificacionview'   => 'csgthermes::error',
-	'ignorecodes'        => [],
 );

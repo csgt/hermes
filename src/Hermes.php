@@ -64,7 +64,8 @@ class Hermes {
 	     		$message->attach($attachment);
 	     	}
 			});
-		} catch (\Exception $e) {
+		} 
+		catch (Exception $e) {
 			$response['error']   = true;
 			$response['message'] = $e->getMessage();
 		}
@@ -81,7 +82,7 @@ class Hermes {
 			$linea     = $excepcion->getLine();
 			$codigo    = $excepcion->getCode();
 		} 
-		catch (\Exception $e) {}
+		catch (Exception $e) {}
 		
 		if ($excepcion instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
 			$codigo = 404;
@@ -97,30 +98,37 @@ class Hermes {
 
 		if(App::environment() == 'local') return;
 
-		if(in_array($codigo, config("csgthermes.ignorecodes"))) return;
-
 		try {
-			$parametros = array(
+			$useragent     = '--';
+			$remoteaddress = '--';
+			if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
+				$useragent = $_SERVER['HTTP_USER_AGENT'];
+			}
+			if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+				$remoteaddress = $_SERVER['REMOTE_ADDR'];
+			}
+			$parametros = [
 				'codigo'    => $codigo,
 				'mensaje'   => $mensaje,
 				'url'       => Request::url(),
 				'vars'			=> Input::all(),
-				'ip'        => $_SERVER['REMOTE_ADDR'],
-				'useragent' => $_SERVER['HTTP_USER_AGENT'],
+				'ip'        => $remoteaddress,
+				'useragent' => $useragent,
 				'userid'    => Auth::check() ? Auth::id() : '--',
 				'rolid'     => Auth::check() ? Auth::user()->rolid : '--',
 				'request'   => Request::method(),
 				'archivo'   => $archivo,
 				'linea'     => $linea
-			);
+			];
 
 			Mail::send(config("csgthermes.notificacionview"), $parametros, function($message) use ($codigo) {
 				$message->from(config("csgthermes.notificacionemail"), config("csgthermes.notificacionfrom").' | '.config("csgthermes.notificaciontitulo"));
 	     	$message->subject(config("csgthermes.notificaciontitulo") . ' - Error ' . $codigo);
 	     	$message->to(config("csgthermes.notificarerrores"));
 			});
-		} catch (\Exception $e) {
-				Log::error($e);
-			}
+		} 
+		catch (Exception $e) {
+			Log::error($e);
+		}
 	}
 }
