@@ -1,8 +1,12 @@
-<?php namespace {{namespace}}Exceptions;
+<?php 
+
+namespace {{namespace}}Exceptions;
 
 use Exception, Csgt\Hermes\Hermes;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -10,51 +14,83 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler {
 
   protected $dontReport = [
+    AuthenticationException::class,
+    AuthorizationException::class,
     HttpException::class,
+    ModelNotFoundException::class,
+    TokenMismatchException::class,
+    ValidationException::class,
   ];
 
   public function report(Exception $e) {
-    Hermes::notificarError($e);
+    if ($this->shouldReport($e)) {
+      Hermes::notificarError($e);
+    }
     return parent::report($e);
   }
 
   public function render($request, Exception $e) {
-    if ($e instanceof ModelNotFoundException) {
-      $e = new NotFoundHttpException('No se encontró el recurso.', $e);
+    switch (true) {
+      case $e instanceof ModelNotFoundException: 
+        $e = new NotFoundHttpException('No se encontró el recurso.', $e);
+        break;
+      case $e instanceof RelationNotFoundException:
+        $e = new NotFoundHttpException('No se encontró la relación.', $e);
+        break;
+      case $e instanceof QueryException: 
+        $e = new BadRequestHttpException($e->errorInfo[2], $e);
+        break;
+      case $e instanceof TokenMismatchException:
+        $e = new UnauthorizedHttpException('Basic', null, $e);
+        break;
+      case $e instanceof AuthenticationException:
+        $e = new UnauthorizedHttpException($e->getMessage(), $e);
+        break;
     }
-    if ($e instanceof QueryException) {
-      $e = new BadRequestHttpException($e->errorInfo[2], $e);
-    }
-    if ($request->expectsJson() && $e instanceof TokenMismatchException) {
-      $e = new UnauthorizedHttpException('Basic', null, $e);
-    }
-    if ($e instanceof HttpException) {
-      $message = $e->getMessage();
+
+    $message    = $e->getMessage();
+    $statusCode = 501;
+
+    if (method_exists($e, 'getStatusCode'))
       $statusCode = $e->getStatusCode();
-      if ($request->expectsJson()) {
-        return response()->json([
-          'error' => $message
-        ], $statusCode);
-      } else {
-        return response()
-          ->view('errors.generic', ['mensaje' => $message], $statusCode);
+
+    if ($request->expectsJson()) {
+      switch (true) {
+        case $e instanceof UnauthorizedHttpException:
+          return response()->json(['codigoerror'=> 999, 'error' => $message, 'data' => []], 401);
+          break;
+        case $e instanceof NotFoundHttpException:
+          return response()->json(['error' => 'No se encontró el recurso.'], $statusCode);
+          break;
+        case $e instanceof MethodNotAllowedHttpException:
+          return response()->json(['error' => 'Método no implementado.'], $statusCode);
+          break;
+        default:
+          return response()->json(['error' => $message], $statusCode);
+          break;
+      }
+    }
+    else {
+      switch (true) {
+        case $e instanceof UnauthorizedHttpException:
+          return redirect()->guest('login'); 
+          break;
+        case $e instanceof NotFoundHttpException:
+          return response()->view('errors.404');
+          break;
+        case $e instanceof MethodNotAllowedHttpException:
+          return response()->view('errors.404');
+          break;
+        default:
+          return response()->view('errors.generic', ['mensaje' => $message], $statusCode);
+          break;
       }
     }
     return parent::render($request, $e);
-  }
-
-  protected function unauthenticated($request, AuthenticationException $exception) {
-    if ($request->expectsJson()) {
-      return response()->json([
-          'codigoerror'=> 999,
-          'error' => $exception->getMessage(),
-          'data' => []
-        ], 401);
-    }
-    return redirect()->guest('login');
   }
 }
